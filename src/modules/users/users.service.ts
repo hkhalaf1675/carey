@@ -1,4 +1,4 @@
-import { BadGatewayException, BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/database/entities/User.entity';
@@ -97,7 +97,7 @@ export class UsersService {
 
     const oldUserWithSameEmail = await this.userRepository.findOneBy({email});
     if(oldUserWithSameEmail && oldUserWithSameEmail.id !== user.id){
-      throw new BadGatewayException(new FailResponseDto(
+      throw new BadRequestException(new FailResponseDto(
         ['This email addess is already used'],
         'Validation error',
         400
@@ -105,7 +105,7 @@ export class UsersService {
     }
 
     if(user.email === email){
-      throw new BadGatewayException(new FailResponseDto(
+      throw new BadRequestException(new FailResponseDto(
         ['This email addess is the same that exists'],
         'Validation error',
         400
@@ -156,7 +156,7 @@ export class UsersService {
 
     const oldUserWithSamePhone = await this.userRepository.findOneBy({phone});
     if(oldUserWithSamePhone && oldUserWithSamePhone.id !== user.id){
-      throw new BadGatewayException(new FailResponseDto(
+      throw new BadRequestException(new FailResponseDto(
         ['This phone is already used'],
         'Validation error',
         400
@@ -164,7 +164,7 @@ export class UsersService {
     }
 
     if(user.phone === phone){
-      throw new BadGatewayException(new FailResponseDto(
+      throw new BadRequestException(new FailResponseDto(
         ['This phone is the same that exists'],
         'Validation error',
         400
@@ -189,7 +189,7 @@ export class UsersService {
     });
 
     try {
-      this.notificationService.sendSms(phone, `Carey Verification code: ${pin}`);
+      await this.notificationService.sendSms(phone, `Carey Verification code: ${pin}`);
     } catch (error) {
       console.log('Error at send sms at update phone: ');
       console.log(error);
@@ -326,7 +326,7 @@ export class UsersService {
     });
 
     try {
-      this.notificationService.sendSms(user.phone, `Carey Verification code: ${pin}`);
+      await this.notificationService.sendSms(user.phone, `Carey Verification code: ${pin}`);
     } catch (error) {
       console.log('Error at send sms: ');
       console.log(error);
