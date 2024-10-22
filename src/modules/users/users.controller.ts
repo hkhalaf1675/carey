@@ -1,10 +1,11 @@
-import { Controller, Get, Post, Body, Patch, UseGuards, Request, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, UseGuards, Request, Query, HttpCode } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { AuthGuard } from 'src/common/guards/auth.guard';
 import { UpdateEmailDto } from './dto/update-email.dto';
 import { UpdatePhoneDto } from './dto/update-phone.dto';
 import { Public } from 'src/common/decorators/public.decorator';
+import { UpdatePinDto } from './dto/update-pin.dto';
 
 @UseGuards(AuthGuard)
 @Controller('users')
@@ -50,5 +51,17 @@ export class UsersController {
   @Get('get-verify-email')
   async sendVerifyEmail(@Request() req: any){
     return await this.usersService.sendVerificationEmail(req.user.id);
+  }
+
+  @HttpCode(200)
+  @Post('update-pin')
+  async createPinCode(@Request() req: any, @Body() updatePinDto: UpdatePinDto){
+    return await this.usersService.createPinCode(req.user.id, updatePinDto.pin);
+  }
+
+  @HttpCode(200)
+  @Post('login-with-pin')
+  async LoginWithPin(@Request() req: any, @Body() updatePinDto: UpdatePinDto){
+    return this.usersService.LoginWithPin(req.user.id, updatePinDto.pin);
   }
 }

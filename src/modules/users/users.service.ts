@@ -1,4 +1,4 @@
-import { BadGatewayException, BadRequestException, Injectable } from '@nestjs/common';
+import { BadGatewayException, BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/database/entities/User.entity';
@@ -60,6 +60,18 @@ export class UsersService {
         'Bad Request',
         400
       ));
+    }
+
+    if(updateUserDto.phone){
+      const oldUserWithSamePhone = await this.userRepository.findOneBy({phone: updateUserDto.phone});
+
+      if(oldUserWithSamePhone && user.id !== oldUserWithSamePhone.id){
+        throw new BadRequestException(new FailResponseDto(
+          ['This phone number is already used!'],
+          'Validation error',
+          400
+        ));
+      }
     }
 
     await this.userRepository.update({id}, {...updateUserDto});
@@ -385,6 +397,67 @@ export class UsersService {
 
     return new SuccessResponseDto(
       'Check your email to verify your account.',
+      null,
+      200
+    );
+  }
+
+  async createPinCode(id: number, pin: string){
+    const user = await this.userRepository.findOneBy({id});
+    if(!user || user === undefined || user === null){
+      console.log('on update my profile: no user was found for that token');
+      
+      throw new BadRequestException(new FailResponseDto(
+        ['Something went wrong!'],
+        'Bad Request',
+        400
+      ));
+    }
+
+    const salt = bcrypt.genSaltSync(10);
+    const hashedPin = bcrypt.hashSync(pin, salt);
+
+    user.pinCode = hashedPin;
+    await this.userRepository.save(user);
+
+    return new SuccessResponseDto(
+      'Pin has been updated successfully.',
+      null,
+      200
+    );
+  }
+
+  async LoginWithPin(id: number, pin: string){
+    const user = await this.userRepository.findOneBy({id});
+    if(!user || user === undefined || user === null){
+      console.log('on update my profile: no user was found for that token');
+      
+      throw new BadRequestException(new FailResponseDto(
+        ['Something went wrong!'],
+        'Bad Request',
+        400
+      ));
+    }
+
+    if(!user.pinCode){
+      throw new BadRequestException(new FailResponseDto(
+        ['There is no pin saved!'],
+        'Bad Request',
+        400
+      ));
+    }
+
+    const isMatch = bcrypt.compareSync(pin, user.pinCode);
+    if(!isMatch){
+      throw new UnauthorizedException(new FailResponseDto(
+        ['Wrong Pin'],
+        'Validation error',
+        401
+      ));
+    }
+
+    return new SuccessResponseDto(
+      'Success',
       null,
       200
     );

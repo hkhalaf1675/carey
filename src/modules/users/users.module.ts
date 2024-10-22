@@ -13,5 +13,6 @@ import { PhoneVerificationPin } from 'src/database/entities/PhoneVerificationPin
   ],
   controllers: [UsersController],
   providers: [UsersService, MailService, NotificationService],
+  exports: []
 })
 export class UsersModule {}

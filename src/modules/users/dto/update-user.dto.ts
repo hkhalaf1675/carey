@@ -11,5 +11,8 @@ export class UpdateUserDto {
     address: string;
 
     @IsOptional()
+    phone: string;
+
+    @IsOptional()
     gender:string;
 }

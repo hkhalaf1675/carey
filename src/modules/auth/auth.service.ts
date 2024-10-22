@@ -21,21 +21,20 @@ export class AuthService {
     @InjectRepository(Role)
     private readonly roleRepository: Repository<Role>,
     private readonly jwtService: JwtService,
-    private readonly configService: ConfigService,
     private readonly mailService: MailService
   )
   {}
 
-  async register(registerDto: RegisterDto) {
+  async register(registerDto: LoginDto) {
     // ensure that there is exists role with this id
-    const existsRole = await this.roleRepository.findOneBy({id: registerDto.roleId});
-    if(!existsRole || existsRole === undefined || existsRole === null){
-      throw new BadRequestException(new FailResponseDto(
-        ['There is no role exists with the same id'],
-        'Validation error',
-        400
-      ));
-    }
+    // const existsRole = await this.roleRepository.findOneBy({id: registerDto.roleId});
+    // if(!existsRole || existsRole === undefined || existsRole === null){
+    //   throw new BadRequestException(new FailResponseDto(
+    //     ['There is no role exists with the same id'],
+    //     'Validation error',
+    //     400
+    //   ));
+    // }
 
     // check that there is no users with this email
     let oldUsersWithSameEmail = await this.userRepository.findOneBy({email: registerDto.email});
@@ -58,8 +57,7 @@ export class AuthService {
     // create the new user
     let newUser = this.userRepository.create({
       ...registerDto,
-      password: hashedPassword,
-      role: existsRole
+      password: hashedPassword
     });
 
     newUser = await this.userRepository.save(newUser)
@@ -69,8 +67,7 @@ export class AuthService {
 
     // create jwt token
     const payload = {
-      user: {id: newUser.id, email: newUser.email},
-      role: existsRole.name
+      user: {id: newUser.id, email: newUser.email}
     };
 
     const token = await this.jwtService.signAsync(payload);

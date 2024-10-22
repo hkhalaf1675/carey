@@ -10,7 +10,7 @@ export class AuthController {
 
   @HttpCode(200)
   @Post('register')
-  register(@Body() registerDto: RegisterDto) {
+  register(@Body() registerDto: LoginDto) {
     return this.authService.register(registerDto);
   }
 
@@ -39,5 +39,4 @@ export class AuthController {
   async facebookLoginCallback(@Request() req){
     return this.authService.externalLogin(req.user);
   }
-
 }
