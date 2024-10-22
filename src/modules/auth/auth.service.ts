@@ -98,11 +98,7 @@ export class AuthService {
       select: {
         id: true,
         email: true,
-        password: true,
-        role: {
-          id: true,
-          name: true
-        }
+        password: true
       },
       relations: { role: true }
     });
