@@ -23,7 +23,7 @@ export const pagnationService = async (Entity: any, query: any, options: any) =>
         let totalItems = data[1];
         let totalPages = Math.ceil(totalItems / perPage);
 
-        await myDataSource.destroy()
+        await myDataSource.destroy();
 
         return new PagnationResponseDto(
             200,

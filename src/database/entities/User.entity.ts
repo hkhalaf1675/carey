@@ -1,5 +1,6 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { Role } from "./Role.entity";
+import { PinCode } from "./PinCode";
 
 @Entity({
     name: 'users'
@@ -93,4 +94,7 @@ export class User{
 
     @ManyToOne((type) => Role, (role) => role.users)
     role: Role;
+
+    @OneToMany((type) => PinCode, pin => pin.user)
+    pins: PinCode[];
 }

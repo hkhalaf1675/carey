@@ -9,8 +9,8 @@ export class MailService{
         private readonly mailerService: MailerService
     ){}
 
-    sendMail(email: string, token: string) {
-        const verificationLink = `${this.configService.get<string>('VERIFICATION_BASE_URL')}?token=${token}`;
+    sendMail(email: string, subject: string, message: string) {
+        
         const mailBody = `<!DOCTYPE html>
                         <html lang="en">
                         <head>
@@ -26,9 +26,7 @@ export class MailService{
                         <body>
                             <div class="container">
                                 <p>Hello</p><br>
-                                <p>please click on this link: </p><br>
-                                <a href="${verificationLink}">${verificationLink}</a><br>
-                                <p>to verify your email address. </p><br>
+                                ${message}
                                 <p>Thank you.</p><br>
                             </div>
                         </body>
@@ -37,7 +35,7 @@ export class MailService{
         this.mailerService.sendMail({
           from: this.configService.get<string>('nodemailer.user'),
           to: email,
-          subject: 'Carey: Verify Your Email',
+          subject: subject,
           html: mailBody
         });
     }

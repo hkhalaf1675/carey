@@ -5,11 +5,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from 'src/database/entities/User.entity';
 import { MailService } from 'src/common/services/mail.service';
 import { NotificationService } from 'src/common/services/notification.service';
-import { PhoneVerificationPin } from 'src/database/entities/PhoneVerificationPin';
+import { PinCode } from 'src/database/entities/PinCode';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, PhoneVerificationPin])
+    TypeOrmModule.forFeature([User, PinCode])
   ],
   controllers: [UsersController],
   providers: [UsersService, MailService, NotificationService],

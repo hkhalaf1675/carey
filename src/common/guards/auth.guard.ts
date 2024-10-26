@@ -3,12 +3,14 @@ import { ConfigService } from '@nestjs/config';
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
-import { Observable } from 'rxjs';
 import { FailResponseDto } from 'src/common/dto/fail.response.dto';
 import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
+import dataSource from 'src/database/data-source';
+import { User } from 'src/database/entities/User.entity';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
+
   constructor(
     private readonly configService: ConfigService,
     private readonly jwtService: JwtService,
@@ -18,6 +20,7 @@ export class AuthGuard implements CanActivate {
   async canActivate(
     context: ExecutionContext,
   ) {
+    
     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
       context.getHandler(),
       context.getClass()
@@ -39,14 +42,22 @@ export class AuthGuard implements CanActivate {
     }
 
     try {
-      const {user, role} = await this.jwtService.verifyAsync(
+      const {user} = await this.jwtService.verifyAsync(
         token, {
           secret: this.configService.get<string>('jwt.secret')
         }
       );
 
       if(user && user !== undefined && user !== null){
-        request['user'] = user;
+        const myDataSource = await dataSource.initialize();
+        const foundUser = await myDataSource.manager.findOneBy(User, {id: user.id});
+
+        if(!foundUser || foundUser === undefined || foundUser === null){
+          return false;
+        }
+        request['user'] = foundUser;
+
+        await myDataSource.destroy();
 
         return true;
       }

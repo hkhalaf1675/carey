@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, UseGuards, Request, Query, HttpCode } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, UseGuards, Request, Query, HttpCode, Delete, ParseIntPipe, Param } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { AuthGuard } from 'src/common/guards/auth.guard';
@@ -6,6 +6,7 @@ import { UpdateEmailDto } from './dto/update-email.dto';
 import { UpdatePhoneDto } from './dto/update-phone.dto';
 import { Public } from 'src/common/decorators/public.decorator';
 import { UpdatePinDto } from './dto/update-pin.dto';
+import { PasswodrDto } from './dto/password.dto';
 
 @UseGuards(AuthGuard)
 @Controller('users')
@@ -39,8 +40,8 @@ export class UsersController {
   }
 
   @Post('verify-my-phone')
-  async verifyPhone(@Request() req: any, @Body('pin') pin: string){
-    return await this.usersService.verifyPhone(req.user.id, pin);
+  async verifyPhone(@Request() req: any, @Body() updatePinDto: UpdatePinDto){
+    return await this.usersService.verifyPhone(req.user.id, updatePinDto.pin);
   }
 
   @Get('get-verify-pin')
@@ -61,7 +62,36 @@ export class UsersController {
 
   @HttpCode(200)
   @Post('login-with-pin')
-  async LoginWithPin(@Request() req: any, @Body() updatePinDto: UpdatePinDto){
-    return this.usersService.LoginWithPin(req.user.id, updatePinDto.pin);
+  async loginWithPin(@Request() req: any, @Body() updatePinDto: UpdatePinDto){
+    return this.usersService.loginWithPin(req.user.id, updatePinDto.pin);
+  }
+
+  @Delete('delete-my-account')
+  async deleteAccount(@Request() req: any, @Body() passwordDto: PasswodrDto){
+    return this.usersService.deleteAccount(req.user.id, passwordDto.password);
+  }
+
+  @Public()
+  @Get('get-account')
+  async getAccount(@Body() updateEmailDto: UpdateEmailDto){
+    return this.usersService.getAccount(updateEmailDto.email);
+  }
+
+  @Public()
+  @Post('send-sms-pin')
+  async sendSmsPin(@Body('userId', ParseIntPipe) userId: number){
+    return this.usersService.sendSmsPin(userId);
+  }
+
+  @Public()
+  @Post('send-mail-pin')
+  async sendMailPin(@Body('userId', ParseIntPipe) userId: number){
+    return this.usersService.sendMailPin(userId);
+  }
+
+  @Public()
+  @Post(':userId/account-recovery')
+  async accountRecovery(@Param('userId', ParseIntPipe) userId: number, @Body() updatePinDto: UpdatePinDto){
+    return this.usersService.accountRecovery(userId, updatePinDto.pin);
   }
 }

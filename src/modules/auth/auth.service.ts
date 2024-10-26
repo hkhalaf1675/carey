@@ -9,13 +9,14 @@ import { SuccessResponseDto } from 'src/common/dto/success.response.dto';
 import { Role } from 'src/database/entities/Role.entity'
 import * as bcrypt from "bcrypt";
 import { JwtService } from '@nestjs/jwt';
-import { ConfigService } from '@nestjs/config';
 import { MailService } from 'src/common/services/mail.service';
+import { ConfigService } from '@nestjs/config';
 ;
 
 @Injectable()
 export class AuthService {
   constructor(
+    private readonly configService: ConfigService,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     @InjectRepository(Role)
@@ -72,9 +73,15 @@ export class AuthService {
 
     const token = await this.jwtService.signAsync(payload);
 
+    const verificationLink = `${this.configService.get<string>('VERIFICATION_BASE_URL')}?token=${token}`;
+    const message = `<p>please click on this link: </p><br>
+                    <a href="${verificationLink}">${verificationLink}</a><br>
+                    <p>to verify your email address. </p><br>`;
+    const subject = 'Carey: Verify Your Email';
+
     // send mail to verify user email
     try {
-      this.mailService.sendMail(newUser.email, token);
+      this.mailService.sendMail(registerDto.email, subject, message);
     } catch (error) {
       console.log('Error at sending email at register:');
       console.log(error);
@@ -122,7 +129,7 @@ export class AuthService {
     }
 
     const payload = {
-      user: { id: user.id, email: user.email}
+      user: { id: user.id, email: user.email }
     }
 
     const token = await this.jwtService.signAsync(payload);
