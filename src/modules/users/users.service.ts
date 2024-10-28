@@ -605,7 +605,7 @@ export class UsersService {
       }
     });
     if(!user || user === undefined || user === null){
-      console.log('Error at account recovery: account with that id found');
+      console.log('Error at account recovery: account with that id is not found');
       
       throw new InternalServerErrorException(new FailResponseDto(
         ['Some went wrong!'],
@@ -650,6 +650,99 @@ export class UsersService {
     return new SuccessResponseDto(
       'login successfully',
       { user, token },
+      200
+    );
+  }
+
+  async createBiometric(id: number, password: string){
+    const user = await this.userRepository.findOne({
+      where: {id}
+    });
+    if(!user || user === undefined || user === null){
+      console.log('Error at account recovery: account with that id is not found');
+      
+      throw new InternalServerErrorException(new FailResponseDto(
+        ['Some went wrong!'],
+        'Somewent wrong',
+        500
+      ));
+    }
+
+    const passwordMatching = bcrypt.compareSync(password, user.password);
+    if(!passwordMatching){
+      throw new UnauthorizedException(new FailResponseDto(
+        ['wrong passowrd!'],
+        'Unauthorized ',
+        401
+      ));
+    }
+
+    user.biometricVerified = true;
+    this.userRepository.save(user);
+
+    return new SuccessResponseDto(
+      'user biometric created successfully',
+      null,
+      200
+    );
+  }
+
+  async removeBiometric(id: number, password: string){
+    const user = await this.userRepository.findOne({
+      where: {id}
+    });
+    if(!user || user === undefined || user === null){
+      console.log('Error at account recovery: account with that id is not found');
+      
+      throw new InternalServerErrorException(new FailResponseDto(
+        ['Some went wrong!'],
+        'Somewent wrong',
+        500
+      ));
+    }
+
+    const passwordMatching = bcrypt.compareSync(password, user.password);
+    if(!passwordMatching){
+      throw new UnauthorizedException(new FailResponseDto(
+        ['wrong passowrd!'],
+        'Unauthorized ',
+        401
+      ));
+    }
+
+    user.biometricVerified = false;
+    this.userRepository.save(user);
+
+    return new SuccessResponseDto(
+      'user biometric removed successfully',
+      null,
+      200
+    );
+  }
+  
+  async updatePassword(id: number, password: string){
+    const user = await this.userRepository.findOne({
+      where: {id}
+    });
+    if(!user || user === undefined || user === null){
+      console.log('Error at account recovery: account with that id is not found');
+      
+      throw new InternalServerErrorException(new FailResponseDto(
+        ['Some went wrong!'],
+        'Somewent wrong',
+        500
+      ));
+    }
+
+    const salt = bcrypt.genSaltSync(10);
+    const hashedPassword = bcrypt.hashSync(password, salt);
+
+    user.password = hashedPassword;
+    this.userRepository.save(user);
+
+    return new SuccessResponseDto(
+      'user password updated successfully',
+      null,
       200
     );
   }

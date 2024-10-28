@@ -86,6 +86,13 @@ export class User{
     })
     phoneVerified: Boolean;
 
+    @Column({
+        type: 'boolean',
+        nullable: false,
+        default: false
+    })
+    biometricVerified: Boolean;
+
     @CreateDateColumn()
     createdAt: Date;
 

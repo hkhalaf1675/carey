@@ -94,4 +94,22 @@ export class UsersController {
   async accountRecovery(@Param('userId', ParseIntPipe) userId: number, @Body() updatePinDto: UpdatePinDto){
     return this.usersService.accountRecovery(userId, updatePinDto.pin);
   }
+
+  @HttpCode(200)
+  @Post('create-biometric')
+  async createBiometric(@Request() req: any, @Body() passwordDto: PasswodrDto){
+    return this.usersService.createBiometric(req.user.id, passwordDto.password);
+  }
+
+  @HttpCode(200)
+  @Post('remove-biometric')
+  async removeBiometric(@Request() req: any, @Body() passwordDto: PasswodrDto){
+    return this.usersService.removeBiometric(req.user.id, passwordDto.password);
+  }
+
+  @HttpCode(200)
+  @Post('update-password')
+  async updatePassword(@Request() req: any, @Body() passwordDto: PasswodrDto){
+    return this.usersService.updatePassword(req.user.id, passwordDto.password);
+  }
 }
