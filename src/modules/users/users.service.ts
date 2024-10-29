@@ -654,7 +654,7 @@ export class UsersService {
     );
   }
 
-  async createBiometric(id: number, password: string){
+  async createBiometric(id: number){
     const user = await this.userRepository.findOne({
       where: {id}
     });
@@ -665,15 +665,6 @@ export class UsersService {
         ['Some went wrong!'],
         'Somewent wrong',
         500
-      ));
-    }
-
-    const passwordMatching = bcrypt.compareSync(password, user.password);
-    if(!passwordMatching){
-      throw new UnauthorizedException(new FailResponseDto(
-        ['wrong passowrd!'],
-        'Unauthorized ',
-        401
       ));
     }
 
@@ -687,7 +678,7 @@ export class UsersService {
     );
   }
 
-  async removeBiometric(id: number, password: string){
+  async removeBiometric(id: number){
     const user = await this.userRepository.findOne({
       where: {id}
     });
@@ -698,15 +689,6 @@ export class UsersService {
         ['Some went wrong!'],
         'Somewent wrong',
         500
-      ));
-    }
-
-    const passwordMatching = bcrypt.compareSync(password, user.password);
-    if(!passwordMatching){
-      throw new UnauthorizedException(new FailResponseDto(
-        ['wrong passowrd!'],
-        'Unauthorized ',
-        401
       ));
     }
 

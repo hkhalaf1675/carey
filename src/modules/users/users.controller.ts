@@ -97,14 +97,14 @@ export class UsersController {
 
   @HttpCode(200)
   @Post('create-biometric')
-  async createBiometric(@Request() req: any, @Body() passwordDto: PasswodrDto){
-    return this.usersService.createBiometric(req.user.id, passwordDto.password);
+  async createBiometric(@Request() req: any){
+    return this.usersService.createBiometric(req.user.id);
   }
-
+  
   @HttpCode(200)
   @Post('remove-biometric')
-  async removeBiometric(@Request() req: any, @Body() passwordDto: PasswodrDto){
-    return this.usersService.removeBiometric(req.user.id, passwordDto.password);
+  async removeBiometric(@Request() req: any){
+    return this.usersService.removeBiometric(req.user.id);
   }
 
   @HttpCode(200)
