@@ -599,10 +599,7 @@ export class UsersService {
   async accountRecovery(id: number, pin: string){
     const user = await this.userRepository.findOne({
       where: {id},
-      select: {
-        id: true,
-        email: true
-      }
+      select: (['id', 'fullName', 'nickName', 'email', 'phone', 'password', 'picture', 'gender', 'emailVerified', 'phoneVerified', 'biometricVerified']),
     });
     if(!user || user === undefined || user === null){
       console.log('Error at account recovery: account with that id is not found');

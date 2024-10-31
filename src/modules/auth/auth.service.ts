@@ -65,6 +65,10 @@ export class AuthService {
     /* 
       userRepository.create(): is create new local object but nt store it into the database
     */
+   delete newUser.password;
+   delete newUser.LoginAppId;
+   delete newUser.createdAt;
+   delete newUser.updatedAt;
 
     // create jwt token
     const payload = {
@@ -102,11 +106,7 @@ export class AuthService {
   async login(loginDto: LoginDto) {
     const existsUser = await this.userRepository.findOne({
       where: {email: loginDto.email},
-      select: {
-        id: true,
-        email: true,
-        password: true
-      },
+      select: (['id', 'fullName', 'nickName', 'email', 'phone', 'password', 'picture', 'gender', 'emailVerified', 'phoneVerified', 'biometricVerified']),
       relations: { role: true }
     });
 
