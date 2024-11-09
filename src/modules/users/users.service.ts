@@ -726,6 +726,30 @@ export class UsersService {
     );
   }
 
+  async updatePicture(id: number, picture: Express.Multer.File){
+    const user = await this.userRepository.findOne({
+      where: {id}
+    });
+    if(!user || user === undefined || user === null){
+      console.log('Error at account recovery: account with that id is not found');
+      
+      throw new InternalServerErrorException(new FailResponseDto(
+        ['Some went wrong!'],
+        'Somewent wrong',
+        500
+      ));
+    }
+
+    user.picture = `${process.cwd()}/uploads/${picture.filename}`;
+    await this.userRepository.save(user);
+
+    return new SuccessResponseDto(
+      'user picture updated successfully',
+      null,
+      200
+    );
+  }
+
   private generatePin(): number{
     return Math.floor(100000 + Math.random() * 900000);
   }
