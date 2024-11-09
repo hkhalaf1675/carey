@@ -740,7 +740,8 @@ export class UsersService {
       ));
     }
 
-    user.picture = `${process.cwd()}/uploads/${picture.filename}`;
+    const prefixPath = this.configService.get<string>('prefixPath');
+    user.picture = `${prefixPath}/uploads/${picture.filename}`;
     await this.userRepository.save(user);
 
     return new SuccessResponseDto(
