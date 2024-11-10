@@ -651,7 +651,7 @@ export class UsersService {
     );
   }
 
-  async createBiometric(id: number){
+  async createBiometric(id: number, password: string){
     const user = await this.userRepository.findOne({
       where: {id}
     });
@@ -665,6 +665,15 @@ export class UsersService {
       ));
     }
 
+    const passwordMatching = bcrypt.compareSync(password, user.password);
+    if(!passwordMatching){
+      throw new UnauthorizedException(new FailResponseDto(
+        ['wrong passowrd!'],
+        'Unauthorized ',
+        401
+      ));
+    }
+
     user.biometricVerified = true;
     this.userRepository.save(user);
 
@@ -675,7 +684,7 @@ export class UsersService {
     );
   }
 
-  async removeBiometric(id: number){
+  async removeBiometric(id: number, password: string){
     const user = await this.userRepository.findOne({
       where: {id}
     });
@@ -686,6 +695,15 @@ export class UsersService {
         ['Some went wrong!'],
         'Somewent wrong',
         500
+      ));
+    }
+
+    const passwordMatching = bcrypt.compareSync(password, user.password);
+    if(!passwordMatching){
+      throw new UnauthorizedException(new FailResponseDto(
+        ['wrong passowrd!'],
+        'Unauthorized ',
+        401
       ));
     }
 
@@ -727,6 +745,13 @@ export class UsersService {
   }
 
   async updatePicture(id: number, picture: Express.Multer.File){
+    if(!picture || picture === undefined || picture === null){
+      throw new BadRequestException(new FailResponseDto(
+        ['picture should not be empty'],
+        'Validation Error!',
+        400
+      ));
+    }
     const user = await this.userRepository.findOne({
       where: {id}
     });
