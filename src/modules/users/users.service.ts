@@ -766,7 +766,7 @@ export class UsersService {
     }
 
     const prefixPath = this.configService.get<string>('prefixPath');
-    user.picture = `${prefixPath}/uploads/${picture.filename}`;
+    user.picture = `${prefixPath}/uploads/users/${picture.filename}`;
     await this.userRepository.save(user);
 
     return new SuccessResponseDto(

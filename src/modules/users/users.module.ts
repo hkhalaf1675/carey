@@ -15,7 +15,7 @@ import { extname } from 'path';
     TypeOrmModule.forFeature([User, PinCode]),
     MulterModule.register({
       storage: diskStorage({
-        destination: './uploads',
+        destination: './uploads/users',
         filename: (req, file, callback) => {
           const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
           callback(null, `${file.fieldname}-${uniqueSuffix}${extname(file.originalname)}`)
