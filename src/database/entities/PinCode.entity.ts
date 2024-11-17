@@ -2,7 +2,7 @@ import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, Up
 import { User } from "./User.entity";
 
 @Entity({
-    name: 'PinCode'
+    name: 'pincode'
 })
 export class PinCode{
     @PrimaryGeneratedColumn()

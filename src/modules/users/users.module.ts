@@ -5,7 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from 'src/database/entities/User.entity';
 import { MailService } from 'src/common/services/mail.service';
 import { NotificationService } from 'src/common/services/notification.service';
-import { PinCode } from 'src/database/entities/PinCode';
+import { PinCode } from 'src/database/entities/PinCode.entity';
 import { MulterModule } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';

@@ -1,6 +1,8 @@
 import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { Role } from "./Role.entity";
-import { PinCode } from "./PinCode";
+import { PinCode } from "./PinCode.entity";
+import { Car } from "./Car.entity";
+import { Rate } from "./Rate.entity";
 
 @Entity({
     name: 'users'
@@ -104,4 +106,10 @@ export class User{
 
     @OneToMany((type) => PinCode, pin => pin.user)
     pins: PinCode[];
+
+    @OneToMany(() => Car, car => car.brand, { nullable: false, onDelete: 'CASCADE'})
+    cars: Car[];
+
+    @OneToMany(() => Rate, rate => rate.user, { nullable: true, onDelete: 'SET NULL'})
+    rates: Rate[];
 }

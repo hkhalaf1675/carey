@@ -8,7 +8,7 @@ import { FailResponseDto } from 'src/common/dto/fail.response.dto';
 import { MailService } from 'src/common/services/mail.service';
 import { JwtService } from '@nestjs/jwt';
 import { NotificationService } from 'src/common/services/notification.service';
-import { PinCode } from 'src/database/entities/PinCode';
+import { PinCode } from 'src/database/entities/PinCode.entity';
 import * as bcrypt from "bcrypt";
 import { ConfigService } from '@nestjs/config';
 
