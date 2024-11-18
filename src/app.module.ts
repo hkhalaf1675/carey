@@ -12,6 +12,7 @@ import { RolesModule } from './modules/roles/roles.module';
 import { UsersModule } from './modules/users/users.module';
 import { BrandModule } from './modules/brand/brand.module';
 import { CarsModule } from './modules/cars/cars.module';
+import { RatesModule } from './modules/rates/rates.module';
 
 @Module({
   imports: [
@@ -50,7 +51,8 @@ import { CarsModule } from './modules/cars/cars.module';
     RolesModule,
     UsersModule,
     BrandModule,
-    CarsModule
+    CarsModule,
+    RatesModule
   ],
   controllers: [AppController],
   providers: [AppService],

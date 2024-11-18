@@ -13,7 +13,7 @@ export class Rate {
         type: 'int',
         nullable: false
     })
-    rate: string;
+    rate: number;
 
     @Column({
         type: 'varchar',
