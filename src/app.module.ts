@@ -10,6 +10,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { JwtModule } from '@nestjs/jwt';
 import { RolesModule } from './modules/roles/roles.module';
 import { UsersModule } from './modules/users/users.module';
+import { BrandModule } from './modules/brand/brand.module';
 
 @Module({
   imports: [
@@ -46,7 +47,8 @@ import { UsersModule } from './modules/users/users.module';
     }),
     AuthModule,
     RolesModule,
-    UsersModule
+    UsersModule,
+    BrandModule
   ],
   controllers: [AppController],
   providers: [AppService],
