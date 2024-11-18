@@ -17,8 +17,17 @@ export class Car {
     })
     name: string;
 
-    @Column()
-    description: string;
+    @Column({
+        type: 'varchar',
+        nullable: true
+    })
+    type?: string;
+
+    @Column({
+        type: 'varchar',
+        nullable: true
+    })
+    description?: string;
 
     @Column({
         nullable: false,

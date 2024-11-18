@@ -15,8 +15,11 @@ export class Rate {
     })
     rate: string;
 
-    @Column()
-    comment: string;
+    @Column({
+        type: 'varchar',
+        nullable: true
+    })
+    comment?: string;
 
     @CreateDateColumn()
     createdAt: Date;

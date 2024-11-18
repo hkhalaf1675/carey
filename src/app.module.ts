@@ -11,6 +11,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { RolesModule } from './modules/roles/roles.module';
 import { UsersModule } from './modules/users/users.module';
 import { BrandModule } from './modules/brand/brand.module';
+import { CarsModule } from './modules/cars/cars.module';
 
 @Module({
   imports: [
@@ -48,7 +49,8 @@ import { BrandModule } from './modules/brand/brand.module';
     AuthModule,
     RolesModule,
     UsersModule,
-    BrandModule
+    BrandModule,
+    CarsModule
   ],
   controllers: [AppController],
   providers: [AppService],

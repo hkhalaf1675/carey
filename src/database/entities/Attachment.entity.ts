@@ -15,7 +15,7 @@ export class Attachment {
     type: string;
 
     @Column()
-    image: string;
+    url: string;
 
     @CreateDateColumn()
     createdAt: Date;
