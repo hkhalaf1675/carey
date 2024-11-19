@@ -35,6 +35,20 @@ export class Car {
     })
     price: number;
 
+    @Column({
+        nullable: false,
+        type: 'varchar',
+        default: 'New'
+    })
+    status: string;
+
+    @Column({
+        nullable: false,
+        type: 'bool',
+        default: true
+    })
+    available: string;
+
     @CreateDateColumn()
     createdAt: Date;
 
