@@ -9,6 +9,9 @@ export class CreateCarDto {
     @IsNotEmpty()
     price: number;
 
+    @IsNotEmpty()
+    status: string;
+
     @IsOptional()
     description?: string;
 
