@@ -13,6 +13,7 @@ import { UsersModule } from './modules/users/users.module';
 import { BrandModule } from './modules/brand/brand.module';
 import { CarsModule } from './modules/cars/cars.module';
 import { RatesModule } from './modules/rates/rates.module';
+import { HomeModule } from './modules/home/home.module';
 
 @Module({
   imports: [
@@ -52,7 +53,8 @@ import { RatesModule } from './modules/rates/rates.module';
     UsersModule,
     BrandModule,
     CarsModule,
-    RatesModule
+    RatesModule,
+    HomeModule
   ],
   controllers: [AppController],
   providers: [AppService],
