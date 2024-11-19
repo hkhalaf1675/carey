@@ -2,7 +2,7 @@ import { BadRequestException, Injectable, NotFoundException, UnauthorizedExcepti
 import { CreateCarDto } from './dto/create-car.dto';
 import { UpdateCarDto } from './dto/update-car.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindOptionsWhere, LessThanOrEqual, Like, Repository } from 'typeorm';
+import { FindOptionsOrderProperty, FindOptionsWhere, LessThanOrEqual, Like, Repository } from 'typeorm';
 import { Car } from 'src/database/entities/Car.entity';
 import { Brand } from 'src/database/entities/Brand.entity';
 import { Attachment } from 'src/database/entities/Attachment.entity';
@@ -189,11 +189,22 @@ export class CarsService {
     return response;
   }
 
+  async getBestOffers(query: any) {
+    const response = await this.getCars({...query, orderby: 'price'});
+    return response;
+  }
+
   private async getCars(query: any) {
-    const { page, perPage, name, price, userId } = query;
+    let { page, perPage, name, price, userId, orderby } = query;
+
+    const order: FindOptionsOrderProperty<Car> = (orderby === 'price')
+      ? { price: 'ASC' }
+      : { id: 'DESC' };
+    
     let filter: FindOptionsWhere<Car>[] = [];
     let baseFilter: FindOptionsWhere<Car> = {};
     
+    baseFilter.available = true;
     if(userId){
       baseFilter.user = {id: userId};
     }
@@ -230,7 +241,8 @@ export class CarsService {
         user: {
           id: true
         }
-      }
+      },
+      order
     };
 
     const options = {

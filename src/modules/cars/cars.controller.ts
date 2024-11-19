@@ -21,6 +21,11 @@ export class CarsController {
     return await this.carsService.findAll(query);
   }
 
+  @Get('best-offers')
+  async getBestOffers(@Query() query: any) {
+    return await this.carsService.getBestOffers(query);
+  }
+
   @Get('my-cars')
   async findMyCars(@Query() query: any, @Request() req: any) {
     return await this.carsService.findMyCars(query, req.user);

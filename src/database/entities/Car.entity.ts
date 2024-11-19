@@ -47,7 +47,7 @@ export class Car {
         type: 'bool',
         default: true
     })
-    available: string;
+    available: boolean;
 
     @CreateDateColumn()
     createdAt: Date;

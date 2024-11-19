@@ -14,10 +14,7 @@ export const pagnationService = async (Entity: any, query: any, options: any) =>
         const data = await entityRepository.findAndCount({
             ...query,
             skip: ((page - 1) * perPage),
-            take: perPage,
-            order: {
-              id: 'DESC'
-            }
+            take: perPage
         });
 
         let totalItems = data[1];
