@@ -9,10 +9,12 @@ import { MulterModule } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { FailResponseDto } from 'src/common/dto/fail.response.dto';
+import { Rate } from 'src/database/entities/Rate.entity';
+import { Color } from 'src/database/entities/Color.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Car, Brand, Attachment]),
+    TypeOrmModule.forFeature([Car, Brand, Attachment, Rate, Color]),
     MulterModule.register({
       storage: diskStorage({
         destination: './uploads/cars',

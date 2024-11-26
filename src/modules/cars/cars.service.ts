@@ -11,6 +11,8 @@ import { FailResponseDto } from 'src/common/dto/fail.response.dto';
 import { SuccessResponseDto } from 'src/common/dto/success.response.dto';
 import { User } from 'src/database/entities/User.entity';
 import { pagnationService } from 'src/common/services/pagnationService';
+import { Rate } from 'src/database/entities/Rate.entity';
+import { Color } from 'src/database/entities/Color.entity';
 
 @Injectable()
 export class CarsService {
@@ -21,6 +23,10 @@ export class CarsService {
     private readonly brandRepository: Repository<Brand>,
     @InjectRepository(Attachment)
     private readonly attachmentRepository: Repository<Attachment>,
+    @InjectRepository(Rate)
+    private readonly rateRepository: Repository<Rate>,
+    @InjectRepository(Color)
+    private readonly colorRepository: Repository<Color>,
     private readonly configService: ConfigService
   ){}
 
@@ -59,6 +65,14 @@ export class CarsService {
 
     await this.attachmentRepository.save(attachments);
 
+    if(createCarDto.carColors.length > 0){
+      let colors = [];
+      createCarDto.carColors.forEach(color => {
+        colors.push({name: color, car});
+      });
+      await this.colorRepository.save(colors);
+    }
+
     return new SuccessResponseDto(
       'Car has been added successfully',
       null,
@@ -75,13 +89,43 @@ export class CarsService {
     const car = await this.carRepository.findOne({
       where: { id },
       relations: {
-        attachments: true
+        attachments: true,
+        rates: {
+          user: true
+        },
+        colors: true,
+        user: true
+      },
+      select: {
+        rates: {
+          id: true,
+          rate: true,
+          comment: true,
+          user: {
+            id: true,
+            nickName: true,
+            fullName: true,
+            email: true,
+            picture: true
+          }
+        },
+        user: {
+          id: true,
+          nickName: true,
+          fullName: true,
+          email: true,
+          picture: true
+        }
       }
     });
 
+    const ratesCount = await this.rateRepository.count({where: {car: { id }}});
+    const ratesSum = await this.rateRepository.sum('rate', {car: {id}});
+    
+
     return new SuccessResponseDto(
       '',
-      { car },
+      { car, carRate: ratesCount ? (ratesSum / ratesCount) : 0 },
       200
     );
   }
@@ -141,7 +185,19 @@ export class CarsService {
       await this.attachmentRepository.save(attachments);
     }
 
+    if(updateCarDto.carColors.length > 0){
+      if(car.colors && car.colors.length > 0){
+        await this.colorRepository.remove(car.colors);
+      }
+      let colors = [];
+      updateCarDto.carColors.forEach(color => {
+        colors.push({name: color, car});
+      });
+      await this.colorRepository.save(colors);
+    }
+
     delete updateCarDto.brandId;
+    delete updateCarDto.carColors;
     await this.carRepository.update({id}, { ...updateCarDto });
 
     return new SuccessResponseDto(

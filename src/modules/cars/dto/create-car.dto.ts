@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsOptional } from "class-validator";
+import { IsArray, IsNotEmpty, IsOptional } from "class-validator";
 import { Brand } from "src/database/entities/Brand.entity";
 import { User } from "src/database/entities/User.entity";
 
@@ -22,8 +22,12 @@ export class CreateCarDto {
     brandId: number;
 
     @IsOptional()
-    brand?: Brand
+    brand?: Brand;
 
     @IsOptional()
-    user?: User
+    user?: User;
+
+    @IsOptional()
+    @IsArray()
+    carColors: string[];
 }

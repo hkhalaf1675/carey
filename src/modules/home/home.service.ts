@@ -31,7 +31,7 @@ export class HomeService {
     const bestOffers = await pagnationService(
       Car,
       {
-        relations: ['brand', 'attachments', 'rates'],
+        relations: ['brand', 'attachments', 'rates', 'colors'],
         select: {
           id: true,
           name: true,
@@ -63,7 +63,7 @@ export class HomeService {
       .leftJoinAndSelect('car.attachments', 'attachments')
       .leftJoinAndSelect('car.brand', 'brand')
       .leftJoinAndSelect('car.rates', 'rate')
-      .where('car.available = :available', { available: true})
+      .leftJoinAndSelect('car.colors', 'colors')
       .addSelect('SUM(rate.rate)', 'totalRatings')
       .groupBy('car.id')
       .orderBy('totalRatings', 'DESC')

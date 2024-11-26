@@ -3,6 +3,7 @@ import { Brand } from "./Brand.entity";
 import { User } from "./User.entity";
 import { Attachment } from "./Attachment.entity";
 import { Rate } from "./Rate.entity";
+import { Color } from "./Color.entity";
 
 @Entity({
     name: 'cars'
@@ -66,4 +67,7 @@ export class Car {
 
     @OneToMany(() => Rate, rate => rate.car, { nullable: true, onDelete: 'SET NULL'})
     rates: Rate[];
+
+    @OneToMany(() => Color, color => color.car, { nullable: false, onDelete: 'CASCADE'})
+    colors: Color[];
 }

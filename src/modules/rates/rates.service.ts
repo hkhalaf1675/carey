@@ -38,7 +38,7 @@ export class RatesService {
     await this.rateRepository.save(rate);
 
     return new SuccessResponseDto(
-      'Car has been updated successfully',
+      'Rate has been added successfully',
       null,
       201
     );
