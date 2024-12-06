@@ -5,6 +5,7 @@ import { Attachment } from "./Attachment.entity";
 import { Rate } from "./Rate.entity";
 import { Color } from "./Color.entity";
 import { Offer } from "./Offer.entity";
+import { Wishlist } from "./Wishlist.entity";
 
 @Entity({
     name: 'cars'
@@ -74,4 +75,7 @@ export class Car {
 
     @OneToMany(() => Offer, offer => offer.car, { nullable: false, onDelete: 'CASCADE'})
     offers: Offer[];
+
+    @OneToMany(() => Wishlist, wishlist => wishlist.car, { nullable: false, onDelete: 'CASCADE'})
+    wishlists: Wishlist[];
 }

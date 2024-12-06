@@ -3,6 +3,7 @@ import { Role } from "./Role.entity";
 import { PinCode } from "./PinCode.entity";
 import { Car } from "./Car.entity";
 import { Rate } from "./Rate.entity";
+import { Wishlist } from "./Wishlist.entity";
 
 @Entity({
     name: 'users'
@@ -112,4 +113,7 @@ export class User{
 
     @OneToMany(() => Rate, rate => rate.user, { nullable: true, onDelete: 'SET NULL'})
     rates: Rate[];
+
+    @OneToMany(() => Wishlist, wishlist => wishlist.user, { nullable: false, onDelete: 'CASCADE'})
+    wishlists: Wishlist[];
 }

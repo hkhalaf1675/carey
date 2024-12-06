@@ -8,6 +8,7 @@ import { Car } from 'src/database/entities/Car.entity';
 import { FailResponseDto } from 'src/common/dto/fail.response.dto';
 import { SuccessResponseDto } from 'src/common/dto/success.response.dto';
 import { pagnationService } from 'src/common/services/pagnationService';
+import { User } from 'src/database/entities/User.entity';
 
 @Injectable()
 export class OffersService {
@@ -41,44 +42,7 @@ export class OffersService {
   }
 
   async findAll(query: any) {
-    const { carId, page, perPage } = query;
-    let filter: FindOptionsWhere<Offer> = {};
-    if(carId){
-      filter.car = {id: carId};
-    }
-
-    const pagnationQuery = {
-      where: filter,
-      relations: {
-        car: {
-          attachments: true
-        }
-      },
-      select: {
-        id: true,
-        type: true,
-        discount: true,
-        description: true,
-        car: {
-          id: true,
-          name: true,
-          type: true,
-          price: true,
-          attachments: {
-            id: true,
-            url: true,
-            type: true
-          }
-        }
-      }
-    };
-
-    const options = {
-      page,
-      perPage
-    };
-
-    const response = await pagnationService(Offer, pagnationQuery, options);
+    const response = await this.getOffers(query);
     return response;
   }
 
@@ -179,5 +143,59 @@ export class OffersService {
       null,
       200
     );
+  }
+
+  async findMyOffers(query: any, user: User){
+    const response = await this.getOffers({...query, userId: user.id});
+    return response;
+  }
+
+  async getOffers(query: any){
+    const { carId, userId, page, perPage } = query;
+    let filter: FindOptionsWhere<Offer> = {};
+    if(carId){
+      filter.car = {id: carId};
+    }
+    if(userId){
+      filter.car = { user: { id: userId }};
+    }
+
+    const pagnationQuery = {
+      where: filter,
+      relations: {
+        car: {
+          attachments: true,
+          user: true
+        }
+      },
+      select: {
+        id: true,
+        type: true,
+        discount: true,
+        description: true,
+        car: {
+          id: true,
+          name: true,
+          type: true,
+          price: true,
+          attachments: {
+            id: true,
+            url: true,
+            type: true
+          },
+          user: {
+            id: true
+          }
+        }
+      }
+    };
+
+    const options = {
+      page,
+      perPage
+    };
+
+    const response = await pagnationService(Offer, pagnationQuery, options);
+    return response;
   }
 }
