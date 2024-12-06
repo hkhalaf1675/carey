@@ -8,8 +8,11 @@ export const pagnationService = async (Entity: any, query: any, options: any) =>
     const perPage = options.perPage ?? 10;
 
     if(Entity){
-        const myDataSource = await dataSource.initialize();
-        const entityRepository = await myDataSource.getRepository(Entity);
+        const myDataSource = dataSource;
+        if(!myDataSource.isInitialized){
+            await myDataSource.initialize();
+        }
+        const entityRepository = myDataSource.getRepository(Entity);
 
         const data = await entityRepository.findAndCount({
             ...query,
@@ -19,8 +22,6 @@ export const pagnationService = async (Entity: any, query: any, options: any) =>
 
         let totalItems = data[1];
         let totalPages = Math.ceil(totalItems / perPage);
-
-        await myDataSource.destroy();
 
         return new PagnationResponseDto(
             200,

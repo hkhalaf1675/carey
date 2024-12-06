@@ -49,10 +49,11 @@ export class AuthGuard implements CanActivate {
       );
 
       if(user && user !== undefined && user !== null){
-        const myDataSource = await dataSource.initialize();
+        const myDataSource = dataSource;
+        if(!myDataSource.isInitialized){
+            await myDataSource.initialize();
+        }
         const foundUser = await myDataSource.manager.findOneBy(User, {id: user.id});
-
-        await myDataSource.destroy();
 
         if(!foundUser || foundUser === undefined || foundUser === null){
           return false;
