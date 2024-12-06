@@ -5,20 +5,17 @@ import { pagnationService } from 'src/common/services/pagnationService';
 import { Attachment } from 'src/database/entities/Attachment.entity';
 import { Brand } from 'src/database/entities/Brand.entity';
 import { Car } from 'src/database/entities/Car.entity';
+import { User } from 'src/database/entities/User.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()
 export class HomeService {
   constructor(
     @InjectRepository(Car)
-    private readonly carRepository: Repository<Car>,
-    @InjectRepository(Brand)
-    private readonly brandRepository: Repository<Brand>,
-    @InjectRepository(Attachment)
-    private readonly attachmentRepository: Repository<Attachment>
+    private readonly carRepository: Repository<Car>
   ){}
 
-  async findAll() {
+  async findAll(user: User) {
     const brands = await pagnationService(
       Brand, 
       {
@@ -28,62 +25,40 @@ export class HomeService {
       {page: 1, perPage: 20}
     );
 
-    const bestOffers = await pagnationService(
-      Car,
-      {
-        relations: ['brand', 'attachments', 'rates', 'colors'],
-        select: {
-          id: true,
-          name: true,
-          price: true,
-          type: true,
-          brand: {
-            id: true,
-            name: true
-          },
-          attachments: {
-            id: true,
-            type: true,
-            url: true
-          },
-          rates: {
-            id: true,
-            rate: true
-          }
-        },
-        order: {
-          price: 'ASC'
-        }
-      },
-      { page: 1, perPage: 25 }
-    );
-
-    const bestCarsQuery = this.carRepository
+    const bestOffers = await this.carRepository
       .createQueryBuilder('car')
       .leftJoinAndSelect('car.attachments', 'attachments')
       .leftJoinAndSelect('car.brand', 'brand')
       .leftJoinAndSelect('car.rates', 'rate')
       .leftJoinAndSelect('car.colors', 'colors')
+      .leftJoinAndSelect('car.wishlists', 'wishlists', 'wishlists.userId = :userId', { userId: user.id})
+      .groupBy('car.id')
+      .orderBy('price', 'ASC')
+      .limit(25)
+      .getMany();
+
+    const bestCars = await this.carRepository
+      .createQueryBuilder('car')
+      .leftJoinAndSelect('car.attachments', 'attachments')
+      .leftJoinAndSelect('car.brand', 'brand')
+      .leftJoinAndSelect('car.rates', 'rate')
+      .leftJoinAndSelect('car.colors', 'colors')
+      .leftJoinAndSelect('car.wishlists', 'wishlists', 'wishlists.userId = :userId', { userId: user.id})
       .addSelect('SUM(rate.rate)', 'totalRatings')
       .groupBy('car.id')
       .orderBy('totalRatings', 'DESC')
-      .limit(25);
-
-    const bestCars = await bestCarsQuery.getMany();
+      .limit(25)
+      .getMany();
 
     return new SuccessResponseDto(
       '',
       {
         brands: brands.data, 
-        bestOffers: bestOffers.data, 
+        bestOffers,
         bestCars
       },
       200
     );
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} home`;
   }
 
 }
