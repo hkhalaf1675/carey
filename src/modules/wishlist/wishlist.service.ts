@@ -56,35 +56,35 @@ export class WishlistService {
 
   async findMyWishlist(user: User, query: any) {
     const { carName, page, perPage } = query;
-    let filter: FindOptionsWhere<Wishlist> = {};
+    let filter: FindOptionsWhere<Car> = {};
     if(carName){
-      filter.car = {name: Like(`%${carName}%`)};
+      filter.name = Like(`%${carName}%`);
     }
-    filter.user = { id: user.id };
+    filter.wishlists = { user: {id: user.id} };
 
     const pagnationQuery = {
       where: filter,
       relations: {
-        car: {
-          attachments: true
+        wishlists: {
+          user: true
         },
-        user: true
+        attachments: true
       },
       select: {
         id: true,
-        car: {
+        name: true,
+        type: true,
+        price: true,
+        attachments: {
           id: true,
-          name: true,
-          type: true,
-          price: true,
-          attachments: {
-            id: true,
-            url: true,
-            type: true
-          }
+          url: true,
+          type: true
         },
-        user: {
-          id: true
+        wishlists: {
+          id: true,
+          user: {
+            id: true
+          }
         }
       }
     };
@@ -94,29 +94,27 @@ export class WishlistService {
       perPage
     };
 
-    const response = await pagnationService(Wishlist, pagnationQuery, options);
+    const response = await pagnationService(Car, pagnationQuery, options);
     return response;
   }
 
   async remove(id: number, user: User) {
     const wishlistItem = await this.wishlistRepository.findOne({
-      where: {id},
-      relations: {user: true}
+      where: {
+        car: {id},
+        user: {id: user.id}
+      },
+      relations: {
+        user: true,
+        car: true
+      }
     });
 
     if(!wishlistItem){
       throw new NotFoundException(new FailResponseDto(
-        ['There is no wishlist item with this id'],
+        ['You do not add that car your wishlist'],
         'Validation error',
         404
-      ));
-    }
-
-    if(wishlistItem.user.id !== user.id){
-      throw new UnauthorizedException(new FailResponseDto(
-        ['You can not delete that item'],
-        'Validation error',
-        401
       ));
     }
 
