@@ -16,6 +16,7 @@ import { RatesModule } from './modules/rates/rates.module';
 import { HomeModule } from './modules/home/home.module';
 import { OffersModule } from './modules/offers/offers.module';
 import { WishlistModule } from './modules/wishlist/wishlist.module';
+import { NotificationsModule } from './modules/notifications/notifications.module';
 
 @Module({
   imports: [
@@ -58,7 +59,8 @@ import { WishlistModule } from './modules/wishlist/wishlist.module';
     RatesModule,
     HomeModule,
     OffersModule,
-    WishlistModule
+    WishlistModule,
+    NotificationsModule
   ],
   controllers: [AppController],
   providers: [AppService],

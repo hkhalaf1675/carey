@@ -65,7 +65,7 @@ export class CarsService {
 
     await this.attachmentRepository.save(attachments);
 
-    if(createCarDto.carColors.length > 0){
+    if(createCarDto.carColors && createCarDto.carColors.length > 0){
       let colors = [];
       createCarDto.carColors.forEach(color => {
         colors.push({name: color, car});

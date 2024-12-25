@@ -68,12 +68,17 @@ export class WishlistService {
         wishlists: {
           user: true
         },
-        attachments: true
+        attachments: true,
+        colors: true,
+        rates: true
       },
       select: {
         id: true,
         name: true,
         type: true,
+        description: true,
+        status: true,
+        available: true,
         price: true,
         attachments: {
           id: true,
