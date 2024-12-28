@@ -17,6 +17,7 @@ import { HomeModule } from './modules/home/home.module';
 import { OffersModule } from './modules/offers/offers.module';
 import { WishlistModule } from './modules/wishlist/wishlist.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
+import { RateReactsModule } from './modules/rate-reacts/rate-reacts.module';
 
 @Module({
   imports: [
@@ -60,7 +61,8 @@ import { NotificationsModule } from './modules/notifications/notifications.modul
     HomeModule,
     OffersModule,
     WishlistModule,
-    NotificationsModule
+    NotificationsModule,
+    RateReactsModule
   ],
   controllers: [AppController],
   providers: [AppService],
