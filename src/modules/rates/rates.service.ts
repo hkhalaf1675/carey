@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { CreateRateDto } from './dto/create-rate.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindOptionsWhere, MoreThanOrEqual, Repository } from 'typeorm';
+import { FindOptionsWhere, Repository } from 'typeorm';
 import { Car } from 'src/database/entities/Car.entity';
 import { Rate } from 'src/database/entities/Rate.entity';
 import { FailResponseDto } from 'src/common/dto/fail.response.dto';
@@ -92,7 +92,7 @@ export class RatesService {
 
     const filter: FindOptionsWhere<Rate> = {};
     if(rate){
-      filter.rate = MoreThanOrEqual(rate);
+      filter.rate = rate;
     }
     if(carId){
       filter.car = { id: carId }
@@ -112,7 +112,8 @@ export class RatesService {
         user: {
           id: true,
           fullName: true,
-          nickName: true
+          nickName: true,
+          picture: true
         },
         car: {
           id: true
