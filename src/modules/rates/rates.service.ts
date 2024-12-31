@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { CreateRateDto } from './dto/create-rate.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindOptionsWhere, Repository } from 'typeorm';
+import { FindOptionsRelations, FindOptionsSelect, FindOptionsWhere, RelationOptions, Repository } from 'typeorm';
 import { Car } from 'src/database/entities/Car.entity';
 import { Rate } from 'src/database/entities/Rate.entity';
 import { FailResponseDto } from 'src/common/dto/fail.response.dto';
@@ -101,24 +101,31 @@ export class RatesService {
       filter.user = { id: userId }
     }
 
+    const relations: FindOptionsRelations<Rate> = {};
+    relations.user = true;
+    relations.reacts = { user: true };
+
+    const select: FindOptionsSelect<Rate> = {};
+    select.id = true;
+    select.comment = true,
+    select.user = {
+      id: true,
+      fullName: true,
+      nickName: true,
+      picture: true
+    };
+    select.reacts = {
+      id: true,
+      react: true,
+      user: {
+        id: true
+      }
+    };
+
     const pagnationQuery = {
       where: filter,
-      relations: ['user', 'car'],
-      select: {
-        id: true,
-        rate: true,
-        comment: true,
-        createdAt: true,
-        user: {
-          id: true,
-          fullName: true,
-          nickName: true,
-          picture: true
-        },
-        car: {
-          id: true
-        }
-      }
+      relations,
+      select
     }
 
     const options = {
